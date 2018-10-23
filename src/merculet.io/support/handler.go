@@ -40,31 +40,24 @@ func isFuncValid(funcName string, ext Extension) bool {
 	return false
 }
 
-func postProcess(ext Extension, stub shim.ChaincodeStubInterface) error{
-
+func postProcess(ext Extension, stub shim.ChaincodeStubInterface) error {
 
 	return nil
 }
 
 func Handle(ext Extension, stub shim.ChaincodeStubInterface) peer.Response {
 
-	//error := postProcess(ext, stub)
-	//if  error!=nil{
-	//	return EncodeResponse(nil,error)
-	//}
-
-
 	funcName, args := stub.GetFunctionAndParameters()
 
 	//is function name valid and allowed?
 
 	if !isFuncValid(funcName, ext) {
-		return  EncodeResponse(nil,errFunctionNameIsEmptyORNotAllowed)
+		return EncodeResponse(nil, errFunctionNameIsEmptyORNotAllowed)
 	}
 
 	//is args valid and allowed?
 	if args == nil || len(args) == 0 || len(args) != 1 {
-		return EncodeResponse(nil,errPayloadInvalid)
+		return EncodeResponse(nil, errPayloadInvalid)
 	}
 
 	fmt.Printf("invoking [%v] with args: %v \n", funcName, args[0])
@@ -72,9 +65,8 @@ func Handle(ext Extension, stub shim.ChaincodeStubInterface) peer.Response {
 	serviceImpl := ext.ServiceImpl
 
 	if !hasImplemented(serviceImpl) {
-		return  EncodeResponse(nil,errors.New(fmt.Sprintf(`%v has not implemented the implied interface \n`, reflect.TypeOf(serviceImpl))))
+		return EncodeResponse(nil, errors.New(fmt.Sprintf(`%v has not implemented the implied interface \n`, reflect.TypeOf(serviceImpl))))
 	}
-
 
 	//interface convention
 	legerStubImpl := ext.ServiceImpl.(ledgerStub).New(&LedgerStub{
@@ -87,7 +79,7 @@ func Handle(ext Extension, stub shim.ChaincodeStubInterface) peer.Response {
 	ccMethod := reflect.ValueOf(legerStubImpl).MethodByName(funcName)
 
 	if ccMethod.Kind() == reflect.Invalid {
-		return  EncodeResponse(nil,errNoSuchChainCodeFunction)
+		return EncodeResponse(nil, errNoSuchChainCodeFunction)
 	}
 
 	//TODO
@@ -97,7 +89,7 @@ func Handle(ext Extension, stub shim.ChaincodeStubInterface) peer.Response {
 
 func handlerInternal(ccMethod reflect.Value, payload []byte, target interface{}) peer.Response {
 
-	data, e := UnMarshal(payload, target)
+	data, e := UnMarshal(payload, &target)
 
 	if e != nil {
 		return EncodeResponse(nil, errors.Wrap(e, `unable to unmarshal the payload as expected`))
@@ -122,6 +114,7 @@ func EncodeResponse(data interface{}, err error) peer.Response {
 	}
 
 	bytes, _ := json.Marshal(data)
+	g
 
 	return shim.Success(bytes)
 }

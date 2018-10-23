@@ -24,3 +24,15 @@ func isModel(i interface{}) bool {
 	modelType := reflect.TypeOf((*ledgerStub)(nil)).Elem()
 	return reflect.TypeOf(i).Implements(modelType)
 }
+
+func TestConstructCompositeKey(t *testing.T) {
+	key := constructCompositeKey(`namesp`, `testkey`)
+	fmt.Printf("%v \n", string(key))
+}
+
+var compositeKeySep = []byte{0x01}
+var lastKeyIndicator = byte(0x01)
+
+func constructCompositeKey(ns string, key string) []byte {
+	return append(append([]byte(ns), compositeKeySep...), []byte(key)...)
+}
