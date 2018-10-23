@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/hyperledger/fabric/core/chaincode/shim"
-	"github.com/hyperledger/fabric/discovery/cmd"
 	"github.com/hyperledger/fabric/protos/peer"
 	"github.com/pkg/errors"
 	"reflect"
@@ -42,17 +41,30 @@ func isFuncValid(funcName string, ext Extension) bool {
 }
 
 func postProcess(ext Extension, stub shim.ChaincodeStubInterface) error{
+
+
+	return nil
+}
+
+func Handle(ext Extension, stub shim.ChaincodeStubInterface) peer.Response {
+
+	//error := postProcess(ext, stub)
+	//if  error!=nil{
+	//	return EncodeResponse(nil,error)
+	//}
+
+
 	funcName, args := stub.GetFunctionAndParameters()
 
 	//is function name valid and allowed?
 
 	if !isFuncValid(funcName, ext) {
-		return  errFunctionNameIsEmptyORNotAllowed
+		return  EncodeResponse(nil,errFunctionNameIsEmptyORNotAllowed)
 	}
 
 	//is args valid and allowed?
 	if args == nil || len(args) == 0 || len(args) != 1 {
-		return errPayloadInvalid
+		return EncodeResponse(nil,errPayloadInvalid)
 	}
 
 	fmt.Printf("invoking [%v] with args: %v \n", funcName, args[0])
@@ -60,7 +72,7 @@ func postProcess(ext Extension, stub shim.ChaincodeStubInterface) error{
 	serviceImpl := ext.ServiceImpl
 
 	if !hasImplemented(serviceImpl) {
-		return  errors.New(fmt.Sprintf(`%v has not implemented the implied interface \n`, reflect.TypeOf(serviceImpl)))
+		return  EncodeResponse(nil,errors.New(fmt.Sprintf(`%v has not implemented the implied interface \n`, reflect.TypeOf(serviceImpl))))
 	}
 
 
@@ -75,19 +87,8 @@ func postProcess(ext Extension, stub shim.ChaincodeStubInterface) error{
 	ccMethod := reflect.ValueOf(legerStubImpl).MethodByName(funcName)
 
 	if ccMethod.Kind() == reflect.Invalid {
-		return  errNoSuchChainCodeFunction
+		return  EncodeResponse(nil,errNoSuchChainCodeFunction)
 	}
-
-	return nil
-}
-
-func Handle(ext Extension, stub shim.ChaincodeStubInterface) peer.Response {
-
-	error := postProcess(ext, stub)
-	if  error!=nil{
-		return EncodeResponse(nil,error)
-	}
-
 
 	//TODO
 
