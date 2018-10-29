@@ -53,7 +53,7 @@ func process(stub shim.ChaincodeStubInterface, service *TokenTransferService) pe
 		if err != nil {
 			return support.EncodeResponse(nil, err)
 		}
-		return support.EncodeResponse(&account, nil)
+		return support.EncodeResponse(*account, nil)
 	}
 
 	return shim.Error(`function not yet implemented`)

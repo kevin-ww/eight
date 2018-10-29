@@ -97,7 +97,7 @@ func (ts *TokenTransferService) Transfer(tx *Transaction) error {
 	//compensateTx := buildCompensateTx(tx)
 	var err error
 	err = ts.transferInternal(tx)
-	if err!=nil{
+	if err != nil {
 		return nil
 	}
 
@@ -148,7 +148,7 @@ func (ts *TokenTransferService) getInternal(tx *Transaction) (*Transaction, erro
 
 func (ts *TokenTransferService) transferInternal(tx *Transaction) error {
 
-	fmt.Printf("with tx %v \n",tx)
+	fmt.Printf("with tx %v \n", tx)
 
 	previousTx, e := ts.getInternal(tx)
 
@@ -174,7 +174,6 @@ func (ts *TokenTransferService) transferInternal(tx *Transaction) error {
 
 func buildCompensateTx(tx *Transaction) *Transaction {
 	//TODO use clone
-
 	tx.From, tx.To = tx.To, tx.From
 	tx.Amount = tx.Amount.Neg(tx.Amount)
 	return tx

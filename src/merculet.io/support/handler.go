@@ -114,7 +114,6 @@ func EncodeResponse(data interface{}, err error) peer.Response {
 	}
 
 	bytes, _ := json.Marshal(data)
-	g
 
 	return shim.Success(bytes)
 }

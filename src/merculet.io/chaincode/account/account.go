@@ -20,16 +20,33 @@ func (cc *ChainCode) Invoke(stub shim.ChaincodeStubInterface) peer.Response {
 	return support.Handle(*cc.Extension, stub)
 }
 
-func main() {
-
-	cc := &ChainCode{
+func NewCC() *ChainCode {
+	return &ChainCode{
 		name: `AccountChainCode`,
 		Extension: &support.Extension{
 			FunctionAllowed: []string{`get`, `has`, `create`, `update`},
 			Entity:          &Account{},
 			ServiceImpl:     &AccountService{},
 		},
+
+		//NewRouters
+		//
+
+		////NewRouters()
+		//	.add()
+		//	.add()
+		//	.add()
+		//	.add()
+
 	}
+}
+
+type routers struct {
+}
+
+func main() {
+
+	cc := NewCC()
 
 	if err := shim.Start(cc); err != nil {
 		fmt.Printf("Error starting %s: %s", cc.name, err)

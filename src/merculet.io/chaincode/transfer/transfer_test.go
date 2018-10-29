@@ -237,6 +237,8 @@ func TestBatchTransferAndGetBalance(t *testing.T) {
 
 	} else {
 		fmt.Printf("payload status: %v  \n", response.GetStatus())
+		fmt.Printf("msg : %v  \n", response.GetMessage())
+		fmt.Printf("payload: %v  \n", string(response.GetPayload()))
 	}
 
 }
