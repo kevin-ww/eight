@@ -2,16 +2,18 @@ package main
 
 type Router struct {
 	handlers map[string]handler
+	impl service
 }
 
 type service interface {
 	serviceMethod(m string) error
 }
 
-func NewRouter() *Router {
+func NewRouter(impl service) *Router {
 	//handlers = make(map[string]handler)
 	return &Router{
 		handlers: make(map[string]handler),
+		impl:impl,
 	}
 }
 
@@ -23,7 +25,7 @@ func (r *Router) add(path string, f func(payload string, srv interface{}) string
 
 func (r *Router) handle(path string, payload string) error {
 	h := r.handlers[path]
-	h(payload, nil)
+	h(payload, r.impl)
 	return nil
 }
 

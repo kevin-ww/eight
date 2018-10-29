@@ -25,7 +25,8 @@ func (t *testService) serviceMethod(m string) error {
 }
 
 func main() {
-	r := NewRouter().add(`test`, testHandler)
+	r := NewRouter(&testService{}).add(`test`, testHandler)
+
 	r.handle(`test`, `test-payload`)
 	//testHandler
 }
